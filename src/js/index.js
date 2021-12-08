@@ -1,7 +1,13 @@
-const parser = require('../../Gramatica/gramatica');
-
 var tabIndex = 2;
 let File_Js = "";
+
+
+function interpretar() {
+    let indice = document.getElementsByClassName("nav-link active tabBtn")
+    let TxtCSharp = document.getElementById("txtArea" + indice[0].id)
+    let curso = TxtCSharp.value;
+    console.log(curso.toString());
+}
 
 function openEditorTab(evt, tabName) {
 
@@ -99,14 +105,7 @@ function llamar() {
 
 }
 
-function interpretar() {
-    let indice = document.getElementsByClassName("nav-link active tabBtn")
-    let TxtCSharp = document.getElementById("txtArea" + indice[0].id)
-    let curso = TxtCSharp.value;
-    console.log(curso);
-    let salida = parser.parse(curso);
-    console.log(salida);
-}
+
 
 
 function obtenerSaludo() {

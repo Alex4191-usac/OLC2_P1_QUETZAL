@@ -16,5 +16,8 @@
     "bugs": {
         "url": "https://github.com/Alex4191-usac/OLC2_P1_QUETZAL/issues"
     },
-    "homepage": "https://github.com/Alex4191-usac/OLC2_P1_QUETZAL#readme"
+    "homepage": "https://github.com/Alex4191-usac/OLC2_P1_QUETZAL#readme",
+    "dependencies": {
+        "browserify": "^17.0.0"
+    }
 }
