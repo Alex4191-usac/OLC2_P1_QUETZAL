@@ -53,35 +53,15 @@
                 <input class="btn btn-primary" type="file" id="fileinput" onchange="openArchive(event)" />
             </div>
         </div>
-        <h6> ENTRADA </h6>
-        <!-- AREA DE TEXTO PARA CONSULTA -->
-        <div id="divEntrada">
-            <textarea id="txtEntrada" name="txtEntrada"></textarea>
-        </div>
         <div class="row">
-            <div id="analizador_area" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <!--Editor de Texto-->
+        <!-- AREA DE TEXTO PARA CONSULTA -->
 
-                <div id="myTabPage">
-
-                    <ul class="nav nav-tabs nav-fill" id="tabPageBtns">
-                        <li class="nav-item">
-                            <a class="nav-link active tabBtn" id="1" onclick="openEditorTab(event,'tab1')">Tab1</a>
-                        </li>
-                    </ul>
-
-                    <div id="tab1" class="tabContent" style="display: block;">
-                        <textarea id="txtArea1" rows="20"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-
-                <label>Traduccion</label>
-                <textarea class="errors_parse" id="errors_jison" rows="20"></textarea>
-
-            </div>
+        <div id="divEntrada">
+            <textarea id="txtEntrada" name="txtEntrada">
+                
+            </textarea>
         </div>
+    </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
@@ -96,7 +76,7 @@
             mode: "javascript"
 
         });
-        entrada.setSize(450, 500);
+        entrada.setSize(1000, 500);
 
         function leerEntrada() {
             //var result = gramatica.parse(entrada.getDoc().getValue());

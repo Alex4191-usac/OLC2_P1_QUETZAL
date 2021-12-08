@@ -115,7 +115,7 @@
 %left 'POR' 'DIV' 'MOD'
 %left 'RPOW' 'RSQRT'
 %left 'NOT'
-%left UMINUS
+%right UMINUS
 %left 'PARIZQ' 'PARDER'
 
 //Produccion inicial
@@ -285,7 +285,7 @@ expresion
     | expresion AND expresion
     | expresion OR expresion
     | NOT expresion
-    | menos expresion %prec UMINUS
+    | MENOS expresion %prec UMINUS
     | expresion CONCAT expresion
     | expresion POTENCIA expresion
     | PARIZQ expresion PARDER

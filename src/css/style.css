@@ -1,5 +1,20 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+:root {
+  --body:#22223b;
+  --header: #10002b;
+}
+
+*{
+  font-family: 'Roboto', sans-serif;
+}
+
+body{
+  background-color: var(--body);
+}
+
 .jumbotron{
-    background-color: #062c06;
+    background-color:var(--header);
     color:#f0efeb;
 }
 
@@ -56,5 +71,12 @@
   color:#e0fbfc;
   font-family: 'Courier New', Courier, monospace;
   font-size: 15px;
+}
+
+#divEntrada{
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
