@@ -159,6 +159,10 @@ instruccion
     | RRETURN expresion PUNTOYCOMA
 ;
 
+imprimir
+    : RPRINT PARIZQ CADENA PARDER PUNTOYCOMA
+    ;
+
 funciones // int edad(int calculo1, int calculo2).....
     :tipo_dato IDENTIFICADOR PARIZQ parametros PARDER LLAVEIZQ instruccion LLAVEDER
 ;
@@ -171,10 +175,20 @@ parametros
 
 params 
     : tipo_dato IDENTIFICADOR
-
+;
 asignacion
-    :| IDENTIFICADOR IGUAL expresion
+    :| IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+     | IDENTIFICADOR PUNTO IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+     |error
+;
 
+declaracion
+    : tipo_dato declaracion_varia PUNTOYCOMA
+    | tipo_dato IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+    | tipo_dato CORIZQ CORDER declaracion_varia PUNTOYCOMA
+    | tipo_dato CORIZQ CORDER IDENTIFICADOR IGUAL expresion PUNTOYCOMA
+    
+;
 tipo_dato
     : RINT
     | RDOUBLE
@@ -186,5 +200,5 @@ tipo_dato
 ;      
 
 expresion
-    : 
+    : CADENA
 ;
