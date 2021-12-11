@@ -3,6 +3,7 @@
     const {Tipo} = require('../ts/ast/Tipo.ts')
     const {Print} = require('../ts/Instrucciones/Print.ts')
     
+    const {Primitivo} = require('../ts/expresiones/Primitivo.ts')
 %}
 %lex
 
@@ -321,12 +322,13 @@ expresion
     | RTAN HASHTAG PARIZQ expresion PARDER
     | RLOG10 HASHTAG PARIZQ expresion PARDER
     | IDENTIFICADOR PUNTO IDENTIFICADOR
-    | ENTERO
-    | DECIMAL 
-    | CADENA 
-    | CARACTER
-    | RTRUE
-    | RFALSE
+    | ENTERO  { $$ = new Primitivo(Number($1), @1.first_line, @1.first_column); }
+    | DECIMAL  { $$ = new Primitivo(Number($1), @1.first_line, @1.first_column); }
+    | CADENA   { $$ = new Primitivo($1, @1.first_line, @1.first_column); }
+    | CARACTER  { $$ = new Primitivo($1, @1.first_line, @1.first_column); }
+    | RTRUE  { $$ = new Primitivo(true, @1.first_line, @1.first_column); }
+    | RFALSE  { $$ = new Primitivo(false, @1.first_line, @1.first_column); }
+    | RNULL  { $$ = new Primitivo(null, @1.first_line, @1.first_column); }
     | IDENTIFICADOR
     | RBEGIN
     | REND
