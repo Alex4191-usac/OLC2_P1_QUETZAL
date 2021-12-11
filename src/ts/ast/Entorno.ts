@@ -4,10 +4,12 @@ export class Entorno{
 
     private anterior: Entorno;
     public tabla: { [id: string]: Simbolo };
+    public nombre: string;
 
-    constructor(anterior: any) {
+    constructor(anterior: any, nombre: string) {
         this.tabla = {};
         this.anterior = anterior;
+        this.nombre = nombre
     }
     agregar(id: string, simbolo: Simbolo) {
         id = id.toLowerCase();

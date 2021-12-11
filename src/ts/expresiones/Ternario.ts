@@ -1,17 +1,23 @@
-import { AST } from '../ast/AST';
-import { Entorno } from '../ast/Entorno';
-import { Tipo } from '../ast/Tipo';
-import { Expresion } from '../interfaces/Expresion';
+import {AST} from "../ast/AST"
+import { Entorno } from "../ast/Entorno"
+import {Tipo} from "../ast/Tipo"
+import { Expresion } from "../interfaces/Expresion"
 
-export class Primitivo implements Expresion {
+
+export class Ternario implements Expresion {
+
+    condicion: Expresion;
+    siVerdadero: Expresion;
+    siFalso: Expresion;
     fila: number;
     columna: number;
-    valor: any;
 
-    constructor(valor: any, fila: number, columna: number) {
+    constructor(condicion: Expresion, siVerdadero: Expresion, siFalso: Expresion, fila: number, columna: number) {
+        this.condicion = condicion;
+        this.siVerdadero = siVerdadero;
+        this.siFalso = siFalso;
         this.fila = fila;
         this.columna = columna;
-        this.valor = valor;
     }
 
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
@@ -38,21 +44,12 @@ export class Primitivo implements Expresion {
     }
 
     getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
-        if (typeof (this.valor) === "string") {
-            if (!this.esChar(this.valor)) {
-                let letra = Array.from(this.valor)
-                let opaux = ""
-                if (letra[0] == "\"" && letra[letra.length - 1] == "\"") {
-                    for (let i: number = 1; i < letra.length - 1; i++) {
-                        opaux += letra[i];
-                    }
-                    this.valor = opaux;
-                }
-            } else {
-                this.valor.replace("'", "");
-            }
+        var condi = this.condicion.getValorImplicito(ent, arbol, errores, imprimir);
+        if (condi) {
+            return this.siVerdadero.getValorImplicito(ent, arbol, errores, imprimir);
+        } else {
+            return this.siFalso.getValorImplicito(ent, arbol, errores, imprimir);
         }
-        return this.valor;
     }
 
     esEntero(n: number) {
@@ -66,5 +63,4 @@ export class Primitivo implements Expresion {
     traducir(ent: Entorno, arbol: AST) {
         throw new Error("Method not implemented.");
     }
-
 }

@@ -3,12 +3,13 @@ import { Tipo } from "./Tipo";
 import {Entorno} from "./Entorno";
 import {AST} from "./AST";
 export class Simbolo implements Expresion{
+  
     fila: number;
     columna: number;
     public identificador: string;
     public valor: any;
     private tipo: Tipo;
-    
+
     constructor(tipo: Tipo, id: string, valor: any, fila: number, columna: number) {
         this.tipo = tipo;
         this.identificador = id;
@@ -17,11 +18,11 @@ export class Simbolo implements Expresion{
         this.columna = columna;
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
+    getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
         return this.tipo;
     }
-    
-    getValorImplicito(ent: Entorno, arbol: AST) {
+
+    getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
         return this.valor;
     }
 

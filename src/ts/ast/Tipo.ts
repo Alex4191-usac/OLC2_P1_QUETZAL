@@ -2,10 +2,11 @@ export enum Tipo {
     STRING,
     INT,
     DOUBLE,
-    BOOL,
-    VOID,
+    BOOLEAN,
+    CHAR,
+    ARRAY,
     STRUCT,
+    VOID,
     NULL,
-    ATRIBUTO,
-    ARRAY
+    ATRIBUTO
 }

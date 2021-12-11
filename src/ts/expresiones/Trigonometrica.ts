@@ -1,17 +1,31 @@
-import { AST } from '../ast/AST';
-import { Entorno } from '../ast/Entorno';
-import { Tipo } from '../ast/Tipo';
-import { Expresion } from '../interfaces/Expresion';
+import {AST} from "../ast/AST"
+import { Entorno } from "../ast/Entorno"
+import {Tipo} from "../ast/Tipo"
+import { Expresion } from "../interfaces/Expresion"
 
-export class Primitivo implements Expresion {
+
+export enum FuncionT {
+    SENO,
+    COSENO,
+    TANGENTE,
+    RAIZ,
+    LOG10
+}
+
+
+export class Trigonometrica implements Expresion {
     fila: number;
     columna: number;
-    valor: any;
+    op1: Expresion;
+    funcion: FuncionT;
+    esArreglo: boolean;
 
-    constructor(valor: any, fila: number, columna: number) {
+    constructor(op1: Expresion, funcion: FuncionT, esArreglo: boolean, fila: number, columna: number) {
+        this.op1 = op1;
+        this.funcion = funcion;
+        this.esArreglo = esArreglo;
         this.fila = fila;
         this.columna = columna;
-        this.valor = valor;
     }
 
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
@@ -38,21 +52,7 @@ export class Primitivo implements Expresion {
     }
 
     getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
-        if (typeof (this.valor) === "string") {
-            if (!this.esChar(this.valor)) {
-                let letra = Array.from(this.valor)
-                let opaux = ""
-                if (letra[0] == "\"" && letra[letra.length - 1] == "\"") {
-                    for (let i: number = 1; i < letra.length - 1; i++) {
-                        opaux += letra[i];
-                    }
-                    this.valor = opaux;
-                }
-            } else {
-                this.valor.replace("'", "");
-            }
-        }
-        return this.valor;
+        
     }
 
     esEntero(n: number) {

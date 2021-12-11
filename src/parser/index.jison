@@ -1,9 +1,11 @@
 %{
-    const {Aritmetica, OperadorA} = require('../ts/expresiones/Aritmetica.ts').default
+    const {Aritmetica, OperadorA} = require('../ts/expresiones/Aritmetica.ts')
     const {Tipo} = require('../ts/ast/Tipo.ts')
     const {Print} = require('../ts/Instrucciones/Print.ts')
     
     const {Primitivo} = require('../ts/expresiones/Primitivo.ts')
+     let ListaE = [];
+     let cadenaE = [];
 %}
 %lex
 
