@@ -4,7 +4,7 @@ import {Tipo} from "../ast/Tipo"
 import { Expresion } from "../interfaces/Expresion"
 
 
-export enum OperadorR {
+export enum operadorRelacional {
     MENOR,
     MAYOR,
     MENORIGUAL,
@@ -18,9 +18,9 @@ export class Relacional implements Expresion {
     columna: number;
     op1: Expresion;
     op2: Expresion;
-    operador: OperadorR;
+    operador: operadorRelacional;
 
-    constructor(op1: Expresion, op2: Expresion, operador: OperadorR, fila: number, columna: number) {
+    constructor(op1: Expresion, op2: Expresion, operador: operadorRelacional, fila: number, columna: number) {
         this.op1 = op1;
         this.op2 = op2;
         this.operador = operador;
@@ -55,7 +55,7 @@ export class Relacional implements Expresion {
         let op1 = this.op1.getValorImplicito(ent, arbol, errores, imprimir);
         let op2 = this.op2.getValorImplicito(ent, arbol, errores, imprimir);
 
-        if (this.operador == OperadorR.MAYOR) {
+        if (this.operador == operadorRelacional.MAYOR) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 > op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -64,7 +64,7 @@ export class Relacional implements Expresion {
                 //Error semantico, los tipos no coinciden para hacer la operación
                 return null;
             }
-        } else if (this.operador == OperadorR.MAYORIGUAL) {
+        } else if (this.operador == operadorRelacional.MAYORIGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 >= op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -73,7 +73,7 @@ export class Relacional implements Expresion {
                 //Error semantico, los tipos no coinciden para hacer la operación
                 return null;
             }
-        } else if (this.operador == OperadorR.MENOR) {
+        } else if (this.operador == operadorRelacional.MENOR) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 < op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -82,7 +82,7 @@ export class Relacional implements Expresion {
                 //Error semantico, los tipos no coinciden para hacer la operación
                 return null;
             }
-        } else if (this.operador == OperadorR.MENORIGUAL) {
+        } else if (this.operador == operadorRelacional.MENORIGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 <= op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -91,7 +91,7 @@ export class Relacional implements Expresion {
                 //Error semantico, los tipos no coinciden para hacer la operación
                 return null;
             }
-        } else if (this.operador == OperadorR.DIFERENTE) {
+        } else if (this.operador == operadorRelacional.DIFERENTE) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 !== op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -102,7 +102,7 @@ export class Relacional implements Expresion {
                 //Error semantico, los tipos no coinciden para hacer la operación
                 return null;
             }
-        } else if (this.operador == OperadorR.IGUAL) {
+        } else if (this.operador == operadorRelacional.IGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 === op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {

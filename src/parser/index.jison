@@ -2,8 +2,9 @@
     const {Aritmetica, OperadorA} = require('../ts/expresiones/Aritmetica.ts')
     const {Tipo} = require('../ts/ast/Tipo.ts')
     const {Print} = require('../ts/Instrucciones/Print.ts')
-    
+   
     const {Primitivo} = require('../ts/expresiones/Primitivo.ts')
+    const { Relacional, OperadorRelacional } = require('../dist/expresiones/Relacional');
      let ListaE = [];
      let cadenaE = [];
 %}
@@ -138,31 +139,31 @@ lista_bloques
     | bloque { $$ = [$1]; }
 ;
 bloque
-    : asignacion
-    | declaracion 
-    | structs 
-    | funciones 
-    | metodos
+    : asignacion { $$ = $1; }
+    | declaracion { $$ = $1; }
+    | structs { $$ = $1; }
+    | funciones { $$ = $1; }
+    | metodos{ $$ = $1; }
     | instruccion { $$ = $1;}
 ;
 instrucciones
-    : instrucciones instruccion 
-    | instruccion 
+    : instrucciones instruccion { $1.push($2);$$=$1; }//lista reecursiva 
+    | instruccion { $$ = [$1]; }
 ;
 instruccion
     : imprimir { $$ = $1; }
-    | declaracion //ya
-    | asignacion //ya
-    | if  // ya
-    | switch //ya
-    | while //ya
-    | do_while //ya
-    | for
+    | declaracion { $$ = $1; } //ya
+    | asignacion { $$ = $1; } //ya
+    | if  { $$ = $1; }// ya
+    | switch { $$ = $1; }//ya
+    | while { $$ = $1; }//ya
+    | do_while { $$ = $1; }//ya
+    | for { $$ = $1; }
     | RBREAK PUNTOYCOMA
     | RCONTINUE PUNTOYCOMA
     | RRETURN PUNTOYCOMA
     | RRETURN expresion PUNTOYCOMA
-    | expresion MASMAS PUNTOYCOMA
+    | expresion MASMAS PUNTOYCOMA 
     | expresion MENOSMENOS PUNTOYCOMA
     | IDENTIFICADOR PUNTO opciones_string PUNTOYCOMA
     | llamada PUNTOYCOMA
@@ -269,21 +270,21 @@ atribs
     | IDENTIFICADOR IDENTIFICADOR
 ;
 tipo_dato
-    : RINT
-    | RDOUBLE
-    | RBOOLEAN
-    | RSTRING
-    | RCHAR
-    | RVOID
+    : RINT {$$= Tipo.INT;}
+    | RDOUBLE {$$=Tipo.DOUBLE;}
+    | RBOOLEAN {$$=Tipo.BOOLEAN;}
+    | RSTRING {$$=Tipo.STRING;}
+    | RCHAR {$$=Tipo.CHAR;}
+    | RVOID{$$=Tipo.VOID;}
 ;      
 
 expresion
     : CADENA
-    | expresion MAS expresion
-    | expresion MENOS expresion
-    | expresion POR expresion
-    | expresion DIV expresion
-    | expresion MOD expresion
+    | expresion MAS expresion { $$ = new Aritmetica($1, $3, OperadorA.SUMA, this._$.first_line, this._$.first_column ); }
+    | expresion MENOS expresion { $$ = new Aritmetica($1, $3, OperadorA.RESTA, this._$.first_line, this._$.first_column ); }
+    | expresion POR expresion { $$ = new Aritmetica($1, $3, OperadorA.MULTIPLICACION, this._$.first_line, this._$.first_column ); }
+    | expresion DIV expresion { $$ = new Aritmetica($1, $3, OperadorA.DIVISION, this._$.first_line, this._$.first_column ); }
+    | expresion MOD expresion { $$ = new Aritmetica($1, $3, OperadorA.MOD, this._$.first_line, this._$.first_column ); }
     | expresion MENORIGUAL expresion
     | expresion MENORQUE expresion
     | expresion MAYORIGUAL expresion
@@ -293,11 +294,11 @@ expresion
     | expresion AND expresion
     | expresion OR expresion
     | NOT expresion
-    | MENOS expresion %prec UMINUS
-    | expresion CONCAT expresion
-    | expresion POTENCIA expresion
+    | MENOS expresion %prec UMINUS { $$ = new Aritmetica($2, null, OperadorA.UNARIO, this._$.first_line, this._$.first_column ); } 
+    | expresion CONCAT expresion { $$ = new Aritmetica($1, $3, OperadorA.CONCAT, this._$.first_line, this._$.first_column ); }
+    | expresion POTENCIA expresion { $$ = new Aritmetica($1, $3, OperadorA.POTENCIA, this._$.first_line, this._$.first_column ); }
     | PARIZQ expresion PARDER
-    | RPOW PARIZQ expresion COMA expresion PARDER
+    | RPOW PARIZQ expresion COMA expresion PARDER { $$ = new Aritmetica($1, $5, OperadorA.POW, this._$.first_line, this._$.first_column ); }
     | RSQRT PARIZQ expresion PARDER
     | RSIN PARIZQ expresion PARDER
     | RCOS PARIZQ expresion PARDER
@@ -332,8 +333,8 @@ expresion
     | RFALSE  { $$ = new Primitivo(false, @1.first_line, @1.first_column); }
     | RNULL  { $$ = new Primitivo(null, @1.first_line, @1.first_column); }
     | IDENTIFICADOR
-    | RBEGIN
-    | REND
+    | RBEGIN {$$=$1;}
+    | REND {$$=$1;}
     
 ;
 
