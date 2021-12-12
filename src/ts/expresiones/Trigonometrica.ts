@@ -4,7 +4,7 @@ import {Tipo} from "../ast/Tipo"
 import { Expresion } from "../interfaces/Expresion"
 
 
-export enum FuncionT {
+export enum FuncionTrigonometrica {
     SENO,
     COSENO,
     TANGENTE,
@@ -17,10 +17,10 @@ export class Trigonometrica implements Expresion {
     fila: number;
     columna: number;
     op1: Expresion;
-    funcion: FuncionT;
+    funcion: FuncionTrigonometrica;
     esArreglo: boolean;
 
-    constructor(op1: Expresion, funcion: FuncionT, esArreglo: boolean, fila: number, columna: number) {
+    constructor(op1: Expresion, funcion: FuncionTrigonometrica, esArreglo: boolean, fila: number, columna: number) {
         this.op1 = op1;
         this.funcion = funcion;
         this.esArreglo = esArreglo;

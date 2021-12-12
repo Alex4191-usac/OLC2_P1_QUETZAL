@@ -4,7 +4,12 @@
     const {Print} = require('../ts/Instrucciones/Print.ts')
    
     const {Primitivo} = require('../ts/expresiones/Primitivo.ts')
-    const { Relacional, OperadorRelacional } = require('../dist/expresiones/Relacional');
+    const { Relacional, operadorRelacional } = require('../dist/expresiones/Relacional');
+    const { Logica, OperadorL } = require('../dist/Expresiones/Logica'); 
+    const { Trigonometrica, FuncionTrigonometrica } = require('../dist/Expresiones/Trigonometrica'); 
+    const { Break } = require('../dist/Instrucciones/Break');
+    const { Return } = require('../dist/Instrucciones/Return');
+    const { Continue } = require('../dist/Instrucciones/Continue');
      let ListaE = [];
      let cadenaE = [];
 %}
@@ -159,10 +164,10 @@ instruccion
     | while { $$ = $1; }//ya
     | do_while { $$ = $1; }//ya
     | for { $$ = $1; }
-    | RBREAK PUNTOYCOMA
-    | RCONTINUE PUNTOYCOMA
-    | RRETURN PUNTOYCOMA
-    | RRETURN expresion PUNTOYCOMA
+    | RBREAK PUNTOYCOMA { $$ = new Break(this._$.first_line, this._$.first_column); }
+    | RCONTINUE PUNTOYCOMA { $$ = new Continue(this._$.first_line, this._$.first_column); }
+    | RRETURN PUNTOYCOMA { $$ = new Return(this._$.first_line, this._$.first_column); }
+    | RRETURN expresion PUNTOYCOMA { $$ = new Return($2, this._$.first_line, this._$.first_column); }
     | expresion MASMAS PUNTOYCOMA 
     | expresion MENOSMENOS PUNTOYCOMA
     | IDENTIFICADOR PUNTO opciones_string PUNTOYCOMA
@@ -187,8 +192,8 @@ switch
 ;
 
 cases
-    : cases case  
-    | case
+    : cases case  { $1.push($2);$$=$1; }
+    | case { $$ = [$1]; }
 ;
 
 case
@@ -285,25 +290,25 @@ expresion
     | expresion POR expresion { $$ = new Aritmetica($1, $3, OperadorA.MULTIPLICACION, this._$.first_line, this._$.first_column ); }
     | expresion DIV expresion { $$ = new Aritmetica($1, $3, OperadorA.DIVISION, this._$.first_line, this._$.first_column ); }
     | expresion MOD expresion { $$ = new Aritmetica($1, $3, OperadorA.MOD, this._$.first_line, this._$.first_column ); }
-    | expresion MENORIGUAL expresion
-    | expresion MENORQUE expresion
-    | expresion MAYORIGUAL expresion
-    | expresion MAYORQUE expresion
-    | expresion NOIGUAL expresion
-    | expresion IGUALIGUAL expresion
-    | expresion AND expresion
-    | expresion OR expresion
-    | NOT expresion
+    | expresion MENORIGUAL expresion { $$ = new Relacional($1, $3, operadorRelacional.MENORIGUAL, this._$.first_line, this._$.first_column ); }
+    | expresion MENORQUE expresion { $$ = new Relacional($1, $3, operadorRelacional.MENOR, this._$.first_line, this._$.first_column ); }
+    | expresion MAYORIGUAL expresion { $$ = new Relacional($1, $3, operadorRelacional.MAYORIGUAL, this._$.first_line, this._$.first_column ); }
+    | expresion MAYORQUE expresion { $$ = new Relacional($1, $3, operadorRelacional.MAYOR, this._$.first_line, this._$.first_column ); }
+    | expresion NOIGUAL expresion { $$ = new Relacional($1, $3, operadorRelacional.DIFERENTE, this._$.first_line, this._$.first_column ); }
+    | expresion IGUALIGUAL expresion  { $$ = new Relacional($1, $3, operadorRelacional.IGUAL, this._$.first_line, this._$.first_column ); }
+    | expresion AND expresion  { $$ = new Logica($1, $3, OperadorL.AND, this._$.first_line, this._$.first_column ); }
+    | expresion OR expresion   { $$ = new Logica($1, $3, OperadorL.OR, this._$.first_line, this._$.first_column ); }
+    | NOT expresion   { $$ = new Logica($2, null, OperadorL.NOT, this._$.first_line, this._$.first_column ); }
     | MENOS expresion %prec UMINUS { $$ = new Aritmetica($2, null, OperadorA.UNARIO, this._$.first_line, this._$.first_column ); } 
     | expresion CONCAT expresion { $$ = new Aritmetica($1, $3, OperadorA.CONCAT, this._$.first_line, this._$.first_column ); }
     | expresion POTENCIA expresion { $$ = new Aritmetica($1, $3, OperadorA.POTENCIA, this._$.first_line, this._$.first_column ); }
-    | PARIZQ expresion PARDER
+    | PARIZQ expresion PARDER  { $$ = $2; }
     | RPOW PARIZQ expresion COMA expresion PARDER { $$ = new Aritmetica($1, $5, OperadorA.POW, this._$.first_line, this._$.first_column ); }
-    | RSQRT PARIZQ expresion PARDER
-    | RSIN PARIZQ expresion PARDER
-    | RCOS PARIZQ expresion PARDER
-    | RTAN PARIZQ expresion PARDER
-    | RLOG10 PARIZQ expresion PARDER
+    | RSQRT PARIZQ expresion PARDER  { $$ = new Trigonometrica($3, FuncionTrigonometrica.RAIZ, false, this._$.first_line, this._$.first_column); }
+    | RSIN PARIZQ expresion PARDER { $$ = new Trigonometrica($3, FuncionTrigonometrica.SENO, false, this._$.first_line, this._$.first_column); }
+    | RCOS PARIZQ expresion PARDER  { $$ = new Trigonometrica($3, FuncionTrigonometrica.COSENO, false, this._$.first_line, this._$.first_column); }
+    | RTAN PARIZQ expresion PARDER { $$ = new Trigonometrica($3, FuncionTrigonometrica.TANGENTE, false, this._$.first_line, this._$.first_column); }
+    | RLOG10 PARIZQ expresion PARDER  { $$ = new Trigonometrica($3, FuncionTrigonometrica.LOG10, false, this._$.first_line, this._$.first_column); }
     | expresion TERNARIO expresion dospuntos expresion
     | IDENTIFICADOR PUNTO opciones_string // voy aquiii
     | llamada 
@@ -319,11 +324,11 @@ expresion
     | HASHTAG IDENTIFICADOR
     | IDENTIFICADOR HASHTAG
     | RPOW HASHTAG PARIZQ expresion COMA expresion PARDER
-    | RSQRT HASHTAG PARIZQ expresion PARDER
-    | RSIN HASHTAG PARIZQ expresion PARDER
-    | RCOS HASHTAG PARIZQ expresion PARDER
-    | RTAN HASHTAG PARIZQ expresion PARDER
-    | RLOG10 HASHTAG PARIZQ expresion PARDER
+    | RSQRT HASHTAG PARIZQ expresion PARDER   { $$ = new Trigonometrica($4, FuncionTrigonometrica.RAIZ, true, this._$.first_line, this._$.first_column); }
+    | RSIN HASHTAG PARIZQ expresion PARDER { $$ = new Trigonometrica($4, FuncionTrigonometrica.SENO, true, this._$.first_line, this._$.first_column); }
+    | RCOS HASHTAG PARIZQ expresion PARDER { $$ = new Trigonometrica($4, FuncionTrigonometrica.COSENO, true, this._$.first_line, this._$.first_column); }
+    | RTAN HASHTAG PARIZQ expresion PARDER { $$ = new Trigonometrica($4, FuncionTrigonometrica.TANGENTE, true, this._$.first_line, this._$.first_column); }
+    | RLOG10 HASHTAG PARIZQ expresion PARDER  { $$ = new Trigonometrica($4, FuncionTrigonometrica.LOG10, true, this._$.first_line, this._$.first_column); }
     | IDENTIFICADOR PUNTO IDENTIFICADOR
     | ENTERO  { $$ = new Primitivo(Number($1), @1.first_line, @1.first_column); }
     | DECIMAL  { $$ = new Primitivo(Number($1), @1.first_line, @1.first_column); }
