@@ -10,6 +10,12 @@
     const { Break } = require('../dist/Instrucciones/Break');
     const { Return } = require('../dist/Instrucciones/Return');
     const { Continue } = require('../dist/Instrucciones/Continue');
+    const { Llamada } = require('../dist/Instrucciones/Llamada');
+    /*INSTRUCCIONES*/
+    const { If } = require('../dist/Instrucciones/If');
+    const { While } = require('../dist/Instrucciones/While'); 
+    const { DoWhile } = require('../dist/Instrucciones/DoWhile'); 
+    const { Switch } = require('../dist/Instrucciones/Switch');  
      let ListaE = [];
      let cadenaE = [];
 %}
@@ -175,20 +181,20 @@ instruccion
 ;
 
 for
-    : RFOR PARIZQ PARDER
+    : RFOR PARIZQ declaracion expresion PUNTOYCOMA instruccion PARDER LLAVEIZQ instrucciones LLAVEDER
 ;
 
 
 do_while
-    : RDO LLAVEIZQ instrucciones LLAVEDER RWHILE PARIZQ expresion PARDER PUNTOYCOMA
+    : RDO LLAVEIZQ instrucciones LLAVEDER RWHILE PARIZQ expresion PARDER PUNTOYCOMA { $$ = new DoWhile($7, $3, this._$.first_line, this._$.first_column); }
 ;
 
 while
-    :RWHILE PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER
+    :RWHILE PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER  { $$ = new While($3, $6, this._$.first_line, this._$.first_column); }
 ;
 
 switch 
-    : RSWITCH PARIZQ expresion PARDER LLAVEIZQ cases LLAVEDER
+    : RSWITCH PARIZQ expresion PARDER LLAVEIZQ cases LLAVEDER { $$ = new Switch($3, $6, this._$.first_line, this._$.first_column ); }
 ;
 
 cases
@@ -205,21 +211,21 @@ case
 
 
 if
- : RIF PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER
- | RIF PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER else 
- | RIF PARIZQ expresion PARDER LLAVEIZQ LLAVEDER
- | RIF PARIZQ expresion PARDER LLAVEIZQ LLAVEDER else 
- | RIF PARIZQ expresion PARDER instrucciones
- | RIF PARIZQ expresion PARDER instrucciones else 
- | RIF PARIZQ expresion PARDER
- | RIF PARIZQ expresion PARDER else 
+ : RIF PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER  { $$ = new If($3, $6, this._$.first_line, this._$.first_column, []); }
+ | RIF PARIZQ expresion PARDER LLAVEIZQ instrucciones LLAVEDER else  { $$ = new If($3, $6, this._$.first_line, this._$.first_column, $8); }
+ | RIF PARIZQ expresion PARDER LLAVEIZQ LLAVEDER { $$ = new If($3, [], this._$.first_line, this._$.first_column, []); }
+ | RIF PARIZQ expresion PARDER LLAVEIZQ LLAVEDER else { $$ = new If($3, [], this._$.first_line, this._$.first_column, $7); }
+ | RIF PARIZQ expresion PARDER instrucciones  { $$ = new If($3, [$5], this._$.first_line, this._$.first_column, []); }
+ | RIF PARIZQ expresion PARDER instrucciones else { $$ = new If($3, [$5], this._$.first_line, this._$.first_column, $6); }
+ | RIF PARIZQ expresion PARDER  { $$ = new If($3, [], this._$.first_line, this._$.first_column, []); }
+ | RIF PARIZQ expresion PARDER else   { $$ = new If($3, [], this._$.first_line, this._$.first_column, $5); }
 ;
 
 else 
-    : RELSE LLAVEIZQ instrucciones LLAVEDER
-    | RELSE LLAVEIZQ LLAVEDER
-    | RELSE RIF
-    | RELSE instrucciones
+    : RELSE LLAVEIZQ instrucciones LLAVEDER {$$=$3;}
+    | RELSE LLAVEIZQ LLAVEDER               {$$=[];}
+    | RELSE RIF                             {$$=[$2];}
+    | RELSE instrucciones                   {$$=[$2];}
 ;
 
 imprimir
@@ -311,7 +317,7 @@ expresion
     | RLOG10 PARIZQ expresion PARDER  { $$ = new Trigonometrica($3, FuncionTrigonometrica.LOG10, false, this._$.first_line, this._$.first_column); }
     | expresion TERNARIO expresion dospuntos expresion
     | IDENTIFICADOR PUNTO opciones_string // voy aquiii
-    | llamada 
+    | llamada                           {$$=$1;}
     | expresion MASMAS
     | expresion MENOSMENOS
     | tipo_dato PUNTO RPARSE PARIZQ expresion PARDER
@@ -354,11 +360,11 @@ opciones_string
 ;
 
 llamada
-    : IDENTIFICADOR PARIZQ args PARDER
-    | IDENTIFICADOR PARIZQ PARDER
+    : IDENTIFICADOR PARIZQ args PARDER{$$ = new Llamada($1, $3, this._$.first_line, this._$.first_column);}
+    | IDENTIFICADOR PARIZQ PARDER {  $$ = new Llamada($1, [], this._$.first_line, this._$.first_column);}
 ;
 
 args
-    : args COMA expresion
-    | expresion
+    : args COMA expresion{$1.push($3); $$=$1;}
+    | expresion {$$=[$1;]}
 ;
