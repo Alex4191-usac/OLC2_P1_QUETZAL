@@ -1,10 +1,7 @@
 import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import { Instruccion } from "../interfaces/Instruccion" 
-import { Expresion } from "../interfaces/Expresion"
-import { Errores } from '../ast/Error';
-import { Simbolo } from "../ast/Simbolo";
-import { Parametro } from '../expresiones/Parametro';
+import { Traduccion } from "../ast/Traduccion";
 
 export class Main implements Instruccion {
 
@@ -26,7 +23,8 @@ export class Main implements Instruccion {
             });
         }
     }
-    traducir(ent: Entorno, arbol: AST) {
+    
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 }

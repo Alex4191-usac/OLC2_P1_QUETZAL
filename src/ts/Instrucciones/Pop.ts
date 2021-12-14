@@ -2,18 +2,24 @@ import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import { Instruccion } from "../interfaces/Instruccion" 
 import { Traduccion } from "../ast/Traduccion";
-
-export class Break implements Instruccion {
+export class Pop implements Instruccion {
     fila: number;
     columna: number;
+    id: any;
 
-    constructor(fila: number, columna: number) {
+    constructor(id: any, fila: number, columna: number) {
+        this.id = id;
         this.fila = fila;
         this.columna = columna;
     }
 
     ejecutar(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
-        return this;
+        let ide = this.id.getValorImplicito(ent, arbol, errores, imprimir);
+        const simbolo = ent.getSimbolo(this.id.identificador);
+        let aux = ide.pop();
+        simbolo.valor = ide;
+        ent.reemplazar(this.id.identificador, simbolo);
+        return aux;
     }
 
     traducir(ent: Entorno, arbol: AST, trad: Traduccion) {

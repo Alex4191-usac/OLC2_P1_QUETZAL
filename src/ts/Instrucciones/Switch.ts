@@ -3,13 +3,13 @@ import { Entorno } from "../ast/Entorno"
 import { Instruccion } from "../interfaces/Instruccion" 
 import { Expresion } from "../interfaces/Expresion"
 import { Errores } from '../ast/Error';
-import { Simbolo } from "../ast/Simbolo";
 import { Continue } from './Continue';
 import { Break } from './Break';
 import { Return } from './Return';
 import { Case } from './Case';
 import { Tipo } from "../AST/Tipo";
 import { Reservada } from '../expresiones/Reservada';
+import { Traduccion } from "../ast/Traduccion";
 
 export class Switch implements Instruccion {
     expresion: Expresion;
@@ -36,7 +36,7 @@ export class Switch implements Instruccion {
                         const entorno = new Entorno(ent, "Switch");
                         var resp: any = this.listadoCases[i].ejecutar(entorno, arbol, errores, imprimir);
                         vienedefaul = false;
-                        if (resp instanceof Break || resp instanceof Continue || resp instanceof Return) {
+                        if (resp instanceof Break || resp instanceof Continue || resp instanceof Return || resp instanceof Errores) {
                             return resp;
                         }
                     }
@@ -45,21 +45,25 @@ export class Switch implements Instruccion {
                     if (this.listadoCases[this.listadoCases.length - 1].expresion instanceof Reservada) {
                         const entorno = new Entorno(ent, "Switch");
                         var resp: any = this.listadoCases[this.listadoCases.length - 1].ejecutar(entorno, arbol, errores, imprimir);
-                        if (resp instanceof Break || resp instanceof Continue || resp instanceof Return) {
+                        if (resp instanceof Break || resp instanceof Continue || resp instanceof Return || resp instanceof Errores) {
                             return resp;
                         }
                     }
                 }
             } else {
-                errores.push(new Errores("Semántico", "Tipo de dato inválido para realizar switch", this.fila, this.columna, ""));
+                let er = new Errores("Semántico", "Tipo de dato inválido para realizar switch", this.fila, this.columna, "");
+                errores.push(er);
                 imprimir.push("\n>>Error semántico en linea " + this.fila + ", El tipo de dato no es permitido para esta función\n");
+                return er;
             }
         } else {
-            errores.push(new Errores("Semántico", "Se quiere hacer switch de una variable que no existe en este entorno", this.fila, this.columna, ""));
+            let er = new Errores("Semántico", "Se quiere hacer switch de una variable que no existe en este entorno", this.fila, this.columna, "");
+            errores.push(er);
             imprimir.push("\n>>Error semántico en linea " + this.fila + ", Se quiere hacer switch de una variable que no existe en este entorno\n");
+            return er;
         }
     }
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 

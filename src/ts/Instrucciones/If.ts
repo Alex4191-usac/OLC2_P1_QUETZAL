@@ -7,6 +7,7 @@ import { Simbolo } from "../ast/Simbolo";
 import { Continue } from './Continue';
 import { Break } from './Break';
 import { Return } from './Return';
+import { Traduccion } from "../ast/Traduccion";
 
 
 export class If implements Instruccion {
@@ -30,31 +31,33 @@ export class If implements Instruccion {
             if (this.condicion.getValorImplicito(ent, arbol, errores, imprimir)) {
                 const entorno = new Entorno(ent, "If");
                 if (this.listadoInstrucciones.length > 0) {
-                    this.listadoInstrucciones.forEach(inst => {
-                        var resp = inst.ejecutar(entorno, arbol, errores, imprimir);
-                        if (resp instanceof Continue || resp instanceof Break || resp instanceof Return) {
+                    for (let i: number = 0; i < this.listadoInstrucciones.length; i++) {
+                        var resp = this.listadoInstrucciones[i].ejecutar(entorno, arbol, errores, imprimir);
+                        if (resp instanceof Continue || resp instanceof Break || resp instanceof Return || resp instanceof Errores) {
                             return resp;
                         }
-                    });
+                    }
                 }
             } else {
                 const entorno = new Entorno(ent, "Else");
                 if (this.listadoElse.length > 0) {
-                    this.listadoElse.forEach(inst => {
-                        var resp = inst.ejecutar(entorno, arbol, errores, imprimir);
-                        if (resp instanceof Continue || resp instanceof Break || resp instanceof Return) {
+                    for (let i: number = 0; i < this.listadoElse.length; i++) {
+                        var resp = this.listadoElse[i].ejecutar(entorno, arbol, errores, imprimir);
+                        if (resp instanceof Continue || resp instanceof Break || resp instanceof Return || resp instanceof Errores) {
                             return resp;
                         }
-                    });
+                    }
                 }
             }
         } else {
-            errores.push(new Errores("Semántico", "No se puede verificar la condición, los tipos no coinciden", this.fila, this.columna, ""));
+            let er = new Errores("Semántico", "No se puede verificar la condición, los tipos no coinciden", this.fila, this.columna, "");
+            errores.push(er);
             imprimir.push(">>Error semántico en linea " + this.fila + ", No se puede verificar la condición, los tipos no coinciden\n");
+            return er;
         }
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 }

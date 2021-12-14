@@ -6,6 +6,8 @@ import { Errores } from '../ast/Error';
 import { Simbolo } from "../ast/Simbolo";
 import { Acceso } from '../expresiones/Acceso';
 import { Aritmetica } from '../expresiones/Aritmetica';
+import { Traduccion } from "../ast/Traduccion";
+
 
 export class Incremento implements Instruccion {
     fila: number;
@@ -31,19 +33,23 @@ export class Incremento implements Instruccion {
                         simbolo.valor = val;
                         ent.reemplazar(this.identificador, simbolo);
                     } else {
-                        errores.push(new Errores("Semántico", "El valor no coincide con el tipo de la variable " + this.identificador, this.fila, this.columna, ""));
+                        let er = new Errores("Semántico", "El valor no coincide con el tipo de la variable " + this.identificador, this.fila, this.columna, "");
+                        errores.push(er);
                         imprimir.push("\n>>Error semántico en linea " + this.fila + ", El valor no coincide con el tipo de la variable " + this.identificador + "\n");
+                        return er;
                     }
                 } else {
-                    errores.push(new Errores("Semántico", "No existe la variable " + this.identificador + " en el entorno actual", this.fila, this.columna, ""));
+                    let er = new Errores("Semántico", "No existe la variable " + this.identificador + " en el entorno actual", this.fila, this.columna, "");
+                    errores.push(er);
                     imprimir.push("\n>>Error semántico en linea " + this.fila + ", No existe la variable " + this.identificador + " en el entorno actual\n");
+                    return er;
                 }
             }
         }
         return this.valor;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 

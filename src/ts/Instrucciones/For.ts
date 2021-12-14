@@ -2,13 +2,13 @@ import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import { Instruccion } from "../interfaces/Instruccion" 
 import { Expresion } from "../interfaces/Expresion"
-import { Errores } from '../ast/Error';
-import { Simbolo } from "../ast/Simbolo";
+import { Errores } from "../ast/Error"
 import { Continue } from './Continue';
 import { Break } from './Break';
 import { Return } from './Return';
 import { Declaracion } from './Declaracion';
 import { Asignacion } from './Asignacion';
+import { Traduccion } from "../ast/Traduccion"
 
 
 export class For implements Instruccion {
@@ -41,6 +41,7 @@ export class For implements Instruccion {
                     if (rep instanceof Break) return null;
                     if (rep instanceof Continue) break;
                     if (rep instanceof Return) return rep;
+                    if (rep instanceof Errores) return rep;
                 }
                 this.incDec.ejecutar(entorno, arbol, errores, imprimir);
             } else {
@@ -48,7 +49,7 @@ export class For implements Instruccion {
             }
         }
     }
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error('Method not implemented.');
     }
 }
