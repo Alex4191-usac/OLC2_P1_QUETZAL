@@ -2,7 +2,7 @@ import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import {Tipo} from "../ast/Tipo"
 import { Expresion } from "../interfaces/Expresion"
-
+import { Traduccion } from "../ast/Traduccion"
 
 export class Reservada implements Expresion {
     fila: number;
@@ -23,10 +23,10 @@ export class Reservada implements Expresion {
     }
 
     getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
-        return this.valor;
+        return this.palabra.toLowerCase();
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 

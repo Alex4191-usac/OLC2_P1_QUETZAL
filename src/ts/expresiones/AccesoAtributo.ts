@@ -1,6 +1,7 @@
 import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import {Tipo} from "../ast/Tipo"
+import { Traduccion } from "../ast/Traduccion";
 import { Expresion } from "../interfaces/Expresion"
 
 export class AccesoAtributo implements Expresion {
@@ -17,6 +18,9 @@ export class AccesoAtributo implements Expresion {
         this.columna = columna;
 
     }
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
+        throw new Error("Method not implemented.");
+    }
 
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
         throw new Error('Method not implemented.');
@@ -24,7 +28,5 @@ export class AccesoAtributo implements Expresion {
     getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
         throw new Error('Method not implemented.');
     }
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error('Method not implemented.');
-    }
+    
 }

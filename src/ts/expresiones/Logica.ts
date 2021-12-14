@@ -2,7 +2,8 @@ import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import {Tipo} from "../ast/Tipo"
 import { Expresion } from "../interfaces/Expresion"
-
+import { Errores } from '../ast/Error';
+import { Traduccion } from "../ast/Traduccion";
 
 export enum OperadorL {
     AND,
@@ -28,7 +29,7 @@ export class Logica implements Expresion {
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
         const valor = this.getValorImplicito(ent, arbol, errores, imprimir);
 
-        if (typeof (valor) === 'number') {
+        if (typeof (valor) === 'number' || typeof (valor) === "bigint") {
             if (this.esEntero(Number(valor))) {
                 return Tipo.INT;
             }
@@ -42,8 +43,6 @@ export class Logica implements Expresion {
             return Tipo.BOOLEAN;
         } else if (valor === null) {
             return Tipo.NULL;
-        } else if (typeof (valor) === 'object') {
-            return Tipo.ARRAY;
         }
         return Tipo.VOID;
     }
@@ -57,14 +56,18 @@ export class Logica implements Expresion {
                 if (typeof (op1) === "boolean" && typeof (op2) === "boolean") {
                     return op1 && op2;
                 } else {
-                    //Agregar error semantico, los tipos no se pueden operar
+                    let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                    errores.push(er);
+                    imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                     return null;
                 }
             } else if (this.operador == OperadorL.OR) {
                 if (typeof (op1) === "boolean" && typeof (op2) === "boolean") {
                     return op1 || op2;
                 } else {
-                    //Agregar error semantico, los tipos no se pueden operar
+                    let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                    errores.push(er);
+                    imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                     return null;
                 }
             }
@@ -74,7 +77,9 @@ export class Logica implements Expresion {
                 if (typeof (op1) === "boolean") {
                     return !op1;
                 } else {
-                    //Agregar error semantico, los tipos no se pueden operar
+                    let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                    errores.push(er);
+                    imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                     return null;
                 }
             }
@@ -90,7 +95,7 @@ export class Logica implements Expresion {
         return n[0] === "'" && n[2] === "'" && n.length === 3;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 

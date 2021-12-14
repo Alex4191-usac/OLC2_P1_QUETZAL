@@ -2,6 +2,9 @@ import { AST } from '../ast/AST';
 import { Entorno } from '../ast/Entorno';
 import { Tipo } from '../ast/Tipo';
 import { Expresion } from '../interfaces/Expresion';
+import { Traduccion } from '../ast/Traduccion';
+
+
 
 export class Primitivo implements Expresion {
     fila: number;
@@ -17,7 +20,7 @@ export class Primitivo implements Expresion {
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
         const valor = this.getValorImplicito(ent, arbol, errores, imprimir);
 
-        if (typeof (valor) === 'number') {
+        if (typeof (valor) === 'number' || typeof (valor) === "bigint") {
             if (this.esEntero(Number(valor))) {
                 return Tipo.INT;
             }
@@ -31,8 +34,6 @@ export class Primitivo implements Expresion {
             return Tipo.BOOLEAN;
         } else if (valor === null) {
             return Tipo.NULL;
-        } else if (typeof (valor) === 'object') {
-            return Tipo.ARRAY;
         }
         return Tipo.VOID;
     }
@@ -63,7 +64,7 @@ export class Primitivo implements Expresion {
         return n[0] === "'" && n[2] === "'" && n.length === 3;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 

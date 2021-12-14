@@ -1,9 +1,10 @@
 import {Simbolo} from './Simbolo';
 
-export class Entorno{
+
+export class Entorno {
 
     private anterior: Entorno;
-    public tabla: { [id: string]: Simbolo };
+    private tabla: { [id: string]: Simbolo };
     public nombre: string;
 
     constructor(anterior: any, nombre: string) {
@@ -11,14 +12,12 @@ export class Entorno{
         this.anterior = anterior;
         this.nombre = nombre
     }
+
     agregar(id: string, simbolo: Simbolo) {
-        id = id.toLowerCase();
-        simbolo.identificador = simbolo.identificador.toLowerCase();
         this.tabla[id] = simbolo;
     }
 
     eliminar(id: string): boolean {
-        id = id.toLowerCase();
         for (let e: Entorno = this; e != null; e = e.anterior) {
             const value = e.tabla[id]
             if (value !== undefined) {
@@ -30,7 +29,6 @@ export class Entorno{
     }
 
     existe(id: string): boolean {
-        id = id.toLowerCase();
         for (let e: Entorno = this; e != null; e = e.anterior) {
             const value = e.tabla[id]
             if (value !== undefined) {
@@ -41,7 +39,6 @@ export class Entorno{
     }
 
     existeEnActual(id: string): boolean {
-        id = id.toLowerCase();
         if (this.tabla[id] !== undefined) {
             return true;
         }
@@ -49,7 +46,6 @@ export class Entorno{
     }
 
     getSimbolo(id: string): any {
-        id = id.toLowerCase();
         for (let e: Entorno = this; e != null; e = e.anterior) {
             if (e.tabla[id] !== undefined) {
                 return e.tabla[id];
@@ -59,13 +55,30 @@ export class Entorno{
     }
 
     reemplazar(id: string, nuevoValor: Simbolo) {
-        id = id.toLowerCase();
         for (let e: Entorno = this; e != null; e = e.anterior) {
             const value = e.tabla[id]
             if (value !== undefined) {
                 e.tabla[id] = nuevoValor;
             }
         }
+    }
+
+    getEntorno(nombre: string, actual: Entorno) {
+        for (let e: Entorno = this; e != null; e = e.anterior) {
+            if (e.nombre === nombre) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    getFuncion(id: any): any {
+        for (let e: Entorno = this; e != null; e = e.anterior) {
+            if (e.tabla[id] !== undefined) {
+                return e.tabla[id];
+            }
+        }
+        return null;
     }
 
 }

@@ -1,22 +1,16 @@
-import {AST} from "../ast/AST"
-import { Entorno } from "../ast/Entorno"
-import {Tipo} from "../ast/Tipo"
-import { Expresion } from "../interfaces/Expresion"
-import { Traduccion } from "../ast/Traduccion"
+import { Expresion } from "../interfaces/Expresion";
+import { AST } from "../ast/AST";
+import { Entorno } from "../ast/Entorno";
+import { Tipo } from "../AST/Tipo"; 
+import { Traduccion } from "../ast/Traduccion";
+export class Arreglo implements Expresion {
 
-
-export class Ternario implements Expresion {
-
-    condicion: Expresion;
-    siVerdadero: Expresion;
-    siFalso: Expresion;
+    expresion: Expresion[];
     fila: number;
     columna: number;
 
-    constructor(condicion: Expresion, siVerdadero: Expresion, siFalso: Expresion, fila: number, columna: number) {
-        this.condicion = condicion;
-        this.siVerdadero = siVerdadero;
-        this.siFalso = siFalso;
+    constructor(expresion: Expresion[], fila: number, columna: number) {
+        this.expresion = expresion;
         this.fila = fila;
         this.columna = columna;
     }
@@ -43,12 +37,28 @@ export class Ternario implements Expresion {
     }
 
     getValorImplicito(ent: Entorno, arbol: AST, errores: any, imprimir: any) {
-        var condi = this.condicion.getValorImplicito(ent, arbol, errores, imprimir);
-        if (condi) {
-            return this.siVerdadero.getValorImplicito(ent, arbol, errores, imprimir);
-        } else {
-            return this.siFalso.getValorImplicito(ent, arbol, errores, imprimir);
+        let aux: any = [];
+        this.expresion.forEach(ele => {
+            aux.push(ele.getValorImplicito(ent, arbol, errores, imprimir));
+        });
+        return aux;
+    }
+
+    obtenerTipo(n: any) {
+        if (typeof (n) === "number") {
+            if (this.esEntero(n)) {
+                return Tipo.INT
+            }
+            return Tipo.DOUBLE
+        } else if (typeof (n) === "string") {
+            if (this.esChar(n)) {
+                return Tipo.CHAR
+            }
+            return Tipo.STRING
+        } else if (typeof (n) === "boolean") {
+            return Tipo.BOOLEAN
         }
+        return Tipo.VOID
     }
 
     esEntero(n: number) {

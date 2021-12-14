@@ -2,9 +2,10 @@ import {AST} from "../ast/AST"
 import { Entorno } from "../ast/Entorno"
 import {Tipo} from "../ast/Tipo"
 import { Expresion } from "../interfaces/Expresion"
+import { Errores } from '../ast/Error';
+import { Traduccion } from "../ast/Traduccion";
 
-
-export enum operadorRelacional {
+export enum OperadorR {
     MENOR,
     MAYOR,
     MENORIGUAL,
@@ -13,14 +14,15 @@ export enum operadorRelacional {
     IGUAL
 }
 
+
 export class Relacional implements Expresion {
     fila: number;
     columna: number;
     op1: Expresion;
     op2: Expresion;
-    operador: operadorRelacional;
+    operador: OperadorR;
 
-    constructor(op1: Expresion, op2: Expresion, operador: operadorRelacional, fila: number, columna: number) {
+    constructor(op1: Expresion, op2: Expresion, operador: OperadorR, fila: number, columna: number) {
         this.op1 = op1;
         this.op2 = op2;
         this.operador = operador;
@@ -31,7 +33,7 @@ export class Relacional implements Expresion {
     getTipo(ent: Entorno, arbol: AST, errores: any, imprimir: any): Tipo {
         const valor = this.getValorImplicito(ent, arbol, errores, imprimir);
 
-        if (typeof (valor) === 'number') {
+        if (typeof (valor) === 'number' || typeof (valor) === "bigint") {
             if (this.esEntero(Number(valor))) {
                 return Tipo.INT;
             }
@@ -45,8 +47,6 @@ export class Relacional implements Expresion {
             return Tipo.BOOLEAN;
         } else if (valor === null) {
             return Tipo.NULL;
-        } else if (typeof (valor) === 'object') {
-            return Tipo.ARRAY;
         }
         return Tipo.VOID;
     }
@@ -55,43 +55,51 @@ export class Relacional implements Expresion {
         let op1 = this.op1.getValorImplicito(ent, arbol, errores, imprimir);
         let op2 = this.op2.getValorImplicito(ent, arbol, errores, imprimir);
 
-        if (this.operador == operadorRelacional.MAYOR) {
+        if (this.operador == OperadorR.MAYOR) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 > op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
                 return op1 > op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
-        } else if (this.operador == operadorRelacional.MAYORIGUAL) {
+        } else if (this.operador == OperadorR.MAYORIGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 >= op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
                 return op1 >= op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
-        } else if (this.operador == operadorRelacional.MENOR) {
+        } else if (this.operador == OperadorR.MENOR) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 < op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
                 return op1 < op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
-        } else if (this.operador == operadorRelacional.MENORIGUAL) {
+        } else if (this.operador == OperadorR.MENORIGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 <= op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
                 return op1 <= op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
-        } else if (this.operador == operadorRelacional.DIFERENTE) {
+        } else if (this.operador == OperadorR.DIFERENTE) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 !== op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -99,10 +107,12 @@ export class Relacional implements Expresion {
             } else if (typeof (op1) === "boolean" && typeof (op2) === "boolean") {
                 return op1 !== op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
-        } else if (this.operador == operadorRelacional.IGUAL) {
+        } else if (this.operador == OperadorR.IGUAL) {
             if (typeof (op1) === "number" && typeof (op2) === "number") {
                 return op1 === op2;
             } else if (typeof (op1) === "string" && typeof (op2) === "string") {
@@ -110,7 +120,9 @@ export class Relacional implements Expresion {
             } else if (typeof (op1) === "boolean" && typeof (op2) === "boolean") {
                 return op1 === op2;
             } else {
-                //Error semantico, los tipos no coinciden para hacer la operación
+                let er = new Errores("Semantico", "Los tipos de datos son incompatibles para operar", this.fila, this.columna, ent.nombre);
+                errores.push(er);
+                imprimir.push("\n>>Error semántico en linea " + this.fila + ", Los tipos de datos son incompatibles para operar\n");
                 return null;
             }
         }
@@ -125,7 +137,7 @@ export class Relacional implements Expresion {
         return n[0] === "'" && n[2] === "'" && n.length === 3;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
+    traducir(ent: Entorno, arbol: AST, trad: Traduccion) {
         throw new Error("Method not implemented.");
     }
 
